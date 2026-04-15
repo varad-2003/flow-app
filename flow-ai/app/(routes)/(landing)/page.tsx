@@ -1,6 +1,6 @@
-import AppPreview from "./(routes)/(landing)/_common/app-preview";
-import Hero from "./(routes)/(landing)/_common/hero";
-import Navbar from "./(routes)/(landing)/_common/navbar";
+import Hero from "./_common/hero";
+import Navbar from "./_common/navbar";
+
 
 export default function Page() {
   return (

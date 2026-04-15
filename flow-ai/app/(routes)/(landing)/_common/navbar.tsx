@@ -1,28 +1,74 @@
 "use client";
-import { useTheme } from "next-themes";
-import Image from "next/image";
 
-const AppPreview = () => {
-  const { theme } = useTheme();
-  const isDark = theme === "dark" ? true : false;
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import Logo from "@/components/logo";
+import { LoginLink, useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { Button } from "@/components/ui/button";
+
+function Navbar() {
+  const { isAuthenticated } = useKindeBrowserClient();
   return (
-    <section className="mt-3">
-      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border bg-white dark:bg-background shadow-md">
-        <div className="relative z-10 mx-auto max-w-5xl">
-          <div className="w-full">
-            <div className="bg-background rounded-(--radius) relative mx-auto overflow-hidden border border-transparent shadow-xl shadow-black/10 ring-1 ring-black/10">
-              <Image
-                src={isDark ? "/images/app-dark.png" : "/images/app-light.png"}
-                alt="app screen"
-                width="2880"
-                height="1842"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
+    <header>
+      
+      <nav
+        className={cn(
+          "mx-auto mt-px flex items-center justify-between gap-3",
+          "rounded-full border bg-white/70 px-4 py-2 shadow-sm backdrop-blur-md",
+          "dark:bg-black/30"
+        )}
+        aria-label="Primary"
+      >
+        <Logo />
+        <ul className="hidden items-center gap-6 text-sm xl:text-base font-normal md:flex">
+          <li>
+            <Link
+              href="#pricing"
+              className="transition-colors hover:text-foreground"
+            >
+              Pricing
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="#features"
+              className="transition-colors hover:text-foreground"
+            >
+              Features
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="#how-it-works"
+              className="transition-colors hover:text-foreground"
+            >
+              Blog
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="#how-it-works"
+              className="transition-colors hover:text-foreground"
+            >
+              Contact us
+            </Link>
+          </li>
+        </ul>
 
-export default AppPreview;
+        <div className="flex items-center gap-2">
+          {isAuthenticated ? (
+            <Link href="/workflow">
+              <Button>Dashboard</Button>
+            </Link>
+          ) : (
+            <LoginLink>
+              <Button>Sign In</Button>
+            </LoginLink>
+          )}
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+export default Navbar;
