@@ -42,9 +42,14 @@ export function WorkflowProvider({
     const [edges, setEdges] = useState<Edge[]>([]);
 
     useEffect(() => {
+    if (initialNodes && initialNodes.length > 0) {
         setNodes(initialNodes);
-        setEdges(initialEdges)
-    }, [initialNodes, initialEdges])
+    } else {
+        setNodes([start_node]); // fallback
+    }
+
+    setEdges(initialEdges || []);
+}, [initialNodes, initialEdges]);
 
     const getUpstreamNodes = (nodeId: string) => {
        const upstream = new Set<string>()

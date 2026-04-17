@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { createNode, NodeTypeEnum } from "@/lib/workflow/node-config";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { error } from "console";
 import { NextResponse } from "next/server";
@@ -48,12 +49,20 @@ export async function POST(req: Request){
 
         const userId = user.id
 
+        const startNode = createNode({
+            type: NodeTypeEnum.START,
+            position: { x: 250, y: 150 }
+        });
+
         const workflow = await prisma.workflow.create({
             data: {
                 userId,
                 name,
                 description: description || "",
-                //flowObject
+                flowObject: JSON.stringify({
+                    nodes: [startNode],
+                    edges: []
+                })
             },
         })
         return NextResponse.json({

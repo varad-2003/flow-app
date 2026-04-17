@@ -20,10 +20,10 @@ export function UseUnsavedChanges({
     const { savedNodes, savedEdges } = useWorkflowStore()
     
     const hasUnsavedChanges = useMemo(() => {
-        const nodeData = (list: Node[]) => list.map((n) => ({
+        const nodeData = (list: Node[] = []) => list.map((n) => ({
             id: n.id, type: n.type, data: n.data
         }))
-        const edgeData = (list: Edge[]) => list.map((e) => ({
+        const edgeData = (list: Edge[] = []) => list.map((e) => ({
             source: e.source, target: e.target, id: e.id
         }))
         return(

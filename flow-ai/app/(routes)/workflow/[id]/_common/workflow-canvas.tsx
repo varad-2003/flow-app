@@ -27,6 +27,7 @@ import { ActionBar, ActionBarGroup, ActionBarItem } from "@/components/ui/action
 import { Spinner } from "@/components/ui/spinner";
 import { UseUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import ChatView from "@/components/workflow/chat";
+import { useEffect } from "react";
 
 const initialNodes = [
   { id: "n1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
@@ -49,6 +50,7 @@ const WorkflowCanvas = ({workflowId}: { workflowId: string}) => {
     nodes,
     edges,
   })
+
 
   const isSelectMode = toolMode === TOOL_MODE_ENUM.SELECT
   const isPreview = view === "preview"
