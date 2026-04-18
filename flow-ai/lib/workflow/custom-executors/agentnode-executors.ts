@@ -69,16 +69,7 @@ export async function executeAgentNode(
         fullText += chunk.text;
         await channel.emit("workflow.chunk", {
           type: "chunk",
-          message: {
-            id: node.id,
-            role: "assistant",
-            content: [
-              {
-                type: "text",
-                text: chunk.text,
-              },
-            ],
-          },
+          content: chunk.text,
         });
 
         await channel.emit("workflow.chunk", {
