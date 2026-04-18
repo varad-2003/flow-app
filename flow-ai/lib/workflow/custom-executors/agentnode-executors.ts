@@ -54,15 +54,6 @@ export async function executeAgentNode(
 
   let fullText = "";
 
-  await channel.emit("workflow.chunk", {
-    type: "chunk",
-    message: {
-      id: node.id,
-      role: "assistant",
-      content: [],
-    },
-  });
-
   for await (const chunk of result.fullStream) {
     switch (chunk.type) {
       case "text-delta":
@@ -130,6 +121,11 @@ export async function executeAgentNode(
 
     }
   }
+  console.log("🔥 EMIT FINISH");
+
+  await channel.emit("workflow.chunk", {
+    type: "finish",
+  }); 
   return {
     output: {
       text: fullText,
