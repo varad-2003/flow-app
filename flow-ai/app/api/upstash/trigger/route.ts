@@ -47,7 +47,8 @@ import { NextResponse } from "next/server";
 const client = new Client({
   token: process.env.QSTASH_TOKEN!,
 });
-const BASE_URL = process.env.NEXT_PUBLIC_VERCEL_URL
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL
+console.log("BASE_URL:", process.env.NEXT_PUBLIC_APP_URL);
 
 export async function POST(request: Request) {
   console.log("🔥 TRIGGER API HIT");
