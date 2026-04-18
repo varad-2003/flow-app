@@ -5,6 +5,8 @@ import { ExecutorContextType } from "@/types/workflow";
 import TopologicalSort from "topological-sort"
 import { success } from "zod";
 
+
+
 export function topologicalSort(nodes: Node[], edges: Edge[]){
     const ts = new TopologicalSort(new Map())
     const excludedNodes: NodeType[] = [NodeTypeEnum.COMMENT]
@@ -61,6 +63,7 @@ export async function executeWorkflow(
     channel: any,
     workflowRunId: string,
 ){
+    console.log("🚀 WORKFLOW STARTED");
     const startNode = nodes.find(node => node.type === NodeTypeEnum.START)
     if(!startNode) throw new Error("Start node not found in the workflow")
 
@@ -78,6 +81,7 @@ export async function executeWorkflow(
     const nodeToExecute = new Set<string>([startNode.id])
 
     for(const node of sortedNodes) {
+        console.log("👉 Executing node:", node.id, node.type);
         if(!nodeToExecute.has(node.id)){
             continue
         }
