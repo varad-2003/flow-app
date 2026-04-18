@@ -47,10 +47,7 @@ import { NextResponse } from "next/server";
 const client = new Client({
   token: process.env.QSTASH_TOKEN!,
 });
-
-const BASE_URL = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : `http://localhost:3000`;
+const BASE_URL = process.env.NEXT_PUBLIC_VERCEL_URL
 
 export async function POST(request: Request) {
   console.log("🔥 TRIGGER API HIT");
