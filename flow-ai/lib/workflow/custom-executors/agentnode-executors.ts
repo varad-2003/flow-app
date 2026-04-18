@@ -67,6 +67,7 @@ export async function executeAgentNode(
     switch (chunk.type) {
       case "text-delta":
         fullText += chunk.text;
+        console.log("🔥 EMIT CHUNK:", chunk.text)
         await channel.emit("workflow.chunk", {
           type: "chunk",
           content: chunk.text,
@@ -126,6 +127,7 @@ export async function executeAgentNode(
 
       default:
         break;
+
     }
   }
   return {

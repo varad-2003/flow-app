@@ -6,7 +6,6 @@ import { serve } from "@upstash/workflow/nextjs"
 import { Edge, Node } from "@xyflow/react"
 import { UIMessage } from "ai"
 
-
 export const GET = async (req: Request) => {
     const { searchParams } = new URL(req.url)
     const workflowRunId = searchParams.get("id")
@@ -21,10 +20,17 @@ export const GET = async (req: Request) => {
                 events: ["workflow.chunk"],
                 history: true,
                 onData({ event, data, channel }) {
+                    console.log("📡 STREAM DATA:", data);
                     controller.enqueue(
                         encoder.encode(`data: ${JSON.stringify(data)}\n\n`)
                     )
-                    if(data.type === "finish") controller.close()
+                    // if(data.type === "finish") controller.close()
+                    if (data.type === "finish") {
+        controller.enqueue(
+            encoder.encode(`data: [DONE]\n\n`)
+        );
+        controller.close();
+    }
                 }
         })
         req.signal.addEventListener("abort", () => {
