@@ -25,8 +25,15 @@ export const createWorkflowTransport = ({ workflowId }: {workflowId: string}) =>
             const data = await triggerRes.json()
             const workflowRunId = data.workflowRunId
 
+            if (!workflowRunId) {
+        throw new Error("No workflowRunId received");
+      }
+
             return fetch(`/api/workflow/chat?id=${workflowRunId}`, {
                 method: "GET",
+                headers: {
+                    "Accept": "text/event-stream",
+                }
             })
         }
     })

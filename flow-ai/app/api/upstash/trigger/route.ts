@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       },
     });
 
-    console.log("SENT TO QSTASH SUCCESSFULLY");
+    console.log("SENT TO QSTASH SUCCESS");
     
 
     return NextResponse.json({
