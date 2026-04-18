@@ -88,14 +88,14 @@ export const { POST } = serve(
             },
         })
     },
-    {
-        qstashClient: new Client({
-            token: process.env.QSTASH_TOKEN!,
-            headers: {
-                "x-vercel-protection-bypass": process.env.VERCEL_PROTECTION_BYPASS_TOKEN!
-            }
-        })
-    }
+    // {
+    //     qstashClient: new Client({
+    //         token: process.env.QSTASH_TOKEN!,
+    //         headers: {
+    //             "x-vercel-protection-bypass": process.env.VERCEL_PROTECTION_BYPASS_TOKEN!
+    //         }
+    //     })
+    // }
 )
 
 // export async function POST(req: Request) {
