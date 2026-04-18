@@ -43,17 +43,20 @@ export const GET = async (req: Request) => {
 
 export const { POST } = serve(
     async (ctx) => {
+        console.log("🚀 WORKER HIT")
         const { workflowId, messages } = ctx.requestPayload as {
             workflowId: string;
             messages: UIMessage[]
         }
 
         const workflowRunId = ctx.workflowRunId
+        console.log("⚡ WORKER RECEIVED ID:", workflowRunId);
         const channel = realtime.channel(workflowRunId)
         const message = messages[messages.length - 1]
         const userInput = message.role === "user" && message.parts[0].type === 'text' ? message.parts[0].text : ""
 
         const { nodes, edges } = await ctx.run("fetch-from-database", async () => {
+            console.log("📦 FETCHING WORKFLOW DATA");
             const workflowData = await prisma.workflow.findUnique({
                 where: {
                     id: workflowId
@@ -68,6 +71,8 @@ export const { POST } = serve(
 
         await ctx.run("workflow-execution", async () => {
             try{
+                console.log("⚡ EXECUTING WORKFLOW");
+
                 await executeWorkflow(
                     nodes,
                     edges,
@@ -76,6 +81,7 @@ export const { POST } = serve(
                     channel,
                     workflowRunId,
                 )
+                console.log("⚡ WORKFLOW EXECUTION COMPLETED");
             } catch (error){
                 console.error("Workflow execution error:", error);
                 throw error

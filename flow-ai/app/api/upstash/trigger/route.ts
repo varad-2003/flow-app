@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     });
 
     console.log("SENT TO QSTASH SUCCESS");
-    
+    console.log("🔥 TRIGGER RESPONSE ID:", workflowRunId);
 
     return NextResponse.json({
       success: true,
