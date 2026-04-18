@@ -22,7 +22,8 @@ export const GET = async (req: Request) => {
                 history: true,
                 onData({ event, data, channel }) {
                     controller.enqueue(
-                        encoder.encode(`data: ${JSON.stringify(data)}\n\n`)
+                        // encoder.encode(`data: ${JSON.stringify(data)}\n\n`)
+                        encoder.encode(JSON.stringify(data) + "\n")
                     )
                     if(data.type === "finish") controller.close()
                 }
@@ -35,7 +36,9 @@ export const GET = async (req: Request) => {
 
      return new Response(stream, {
         headers: {
-            "Content-Type": "text/event-stream",
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
         }
      })
 
