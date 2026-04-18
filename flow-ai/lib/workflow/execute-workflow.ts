@@ -101,6 +101,15 @@ export async function executeWorkflow(
 
         try {
             const result = await exector(node, context);
+            const text = result.output?.text || result.output;
+
+            if (node.type === NodeTypeEnum.AGENT && text) {
+    await channel.emit("workflow.chunk", {
+        type: "chunk",
+        content: text,
+    });
+}
+
             await channel.emit("workflow.chunk", {
                 type: "data-workflow-node",
                 id: node.id,
@@ -109,7 +118,7 @@ export async function executeWorkflow(
                     nodeType: node.type,
                     nodeName: node.data.label,
                     status: "complete",
-                    output: result.output?.text || result.output
+                    output: text
                 }
             })
 
