@@ -41,53 +41,85 @@ export const GET = async (req: Request) => {
 
 }
 
-export const { POST } = serve(
-    async (ctx) => {
-        const { workflowId, messages } = ctx.requestPayload as {
-            workflowId: string;
-            messages: UIMessage[]
-        }
+// export const { POST } = serve(
+//     async (ctx) => {
+//         const { workflowId, messages } = ctx.requestPayload as {
+//             workflowId: string;
+//             messages: UIMessage[]
+//         }
 
-        const workflowRunId = ctx.workflowRunId
-        const channel = realtime.channel(workflowRunId)
-        const message = messages[messages.length - 1]
-        const userInput = message.role === "user" && message.parts[0].type === 'text' ? message.parts[0].text : ""
+//         const workflowRunId = ctx.workflowRunId
+//         const channel = realtime.channel(workflowRunId)
+//         const message = messages[messages.length - 1]
+//         const userInput = message.role === "user" && message.parts[0].type === 'text' ? message.parts[0].text : ""
 
-        const { nodes, edges } = await ctx.run("fetch-from-database", async () => {
-            const workflowData = await prisma.workflow.findUnique({
-                where: {
-                    id: workflowId
-                }
-            })
-            if(!workflowData) throw new Error("Workflow not found")
-            const obj = JSON.parse(workflowData.flowObject)
-            const nodes = obj.nodes as Node[]
-            const edges = obj.edges as Edge[]
-            return { nodes, edges }
-        })
+//         const { nodes, edges } = await ctx.run("fetch-from-database", async () => {
+//             const workflowData = await prisma.workflow.findUnique({
+//                 where: {
+//                     id: workflowId
+//                 }
+//             })
+//             if(!workflowData) throw new Error("Workflow not found")
+//             const obj = JSON.parse(workflowData.flowObject)
+//             const nodes = obj.nodes as Node[]
+//             const edges = obj.edges as Edge[]
+//             return { nodes, edges }
+//         })
 
-        await ctx.run("workflow-execution", async () => {
-            try{
-                await executeWorkflow(
-                    nodes,
-                    edges,
-                    userInput,
-                    messages,
-                    channel,
-                    workflowRunId,
-                )
-            } catch (error){
-                console.error("Workflow execution error:", error);
-                throw error
-            }   
-        })
-    },
-    {
-        qstashClient: new Client({
-            token: process.env.QSTASH_TOKEN!,
-            headers: {
-                "x-vercel-protection-bypass": process.env.VERCEL_PROTECTION_BYPASS_TOKEN!
-            }
-        })
-    }
-)
+//         await ctx.run("workflow-execution", async () => {
+//             try{
+//                 await executeWorkflow(
+//                     nodes,
+//                     edges,
+//                     userInput,
+//                     messages,
+//                     channel,
+//                     workflowRunId,
+//                 )
+//             } catch (error){
+//                 console.error("Workflow execution error:", error);
+//                 throw error
+//             }   
+//         })
+//     },
+//     {
+//         qstashClient: new Client({
+//             token: process.env.QSTASH_TOKEN!,
+//             headers: {
+//                 "x-vercel-protection-bypass": process.env.VERCEL_PROTECTION_BYPASS_TOKEN!
+//             }
+//         })
+//     }
+// )
+
+export async function POST(req: Request) {
+    const { workflowId, messages } = await req.json()
+
+    const workflowRunId = crypto.randomUUID()
+    const channel = realtime.channel(workflowRunId)
+
+    const message = messages[messages.length - 1]
+    const userInput =
+      message.role === "user" && message.parts[0].type === "text"
+        ? message.parts[0].text
+        : ""
+
+    const workflowData = await prisma.workflow.findUnique({
+        where: { id: workflowId }
+    })
+
+    if (!workflowData) throw new Error("Workflow not found")
+
+    const obj = JSON.parse(workflowData.flowObject)
+
+    await executeWorkflow(
+        obj.nodes,
+        obj.edges,
+        userInput,
+        messages,
+        channel,
+        workflowRunId
+    )
+
+    return Response.json({ workflowRunId })
+}
