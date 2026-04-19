@@ -6,6 +6,9 @@ import { serve } from "@upstash/workflow/nextjs";
 import { Edge, Node } from "@xyflow/react";
 import { generateId, UIMessage } from "ai";
 
+export const dynamic = "force-dynamic"
+export const maxDuration = 60
+
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const workflowRunId = searchParams.get("id");
