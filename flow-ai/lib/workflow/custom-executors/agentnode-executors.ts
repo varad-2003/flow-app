@@ -123,9 +123,6 @@ export async function executeAgentNode(
   }
   console.log("🔥 EMIT FINISH");
 
-  await channel.emit("workflow.chunk", {
-    type: "finish",
-  }); 
   return {
     output: {
       text: fullText,
