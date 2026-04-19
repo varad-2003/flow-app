@@ -52,10 +52,10 @@ console.log("BASE_URL:", process.env.NEXT_PUBLIC_APP_URL);
 
 export async function POST(request: Request) {
   console.log("🔥 TRIGGER API HIT");
-  const { workflowId, messages } = await request.json();
+  const { workflowId, messages, workflowRunId } = await request.json();
 
   try {
-    const workflowRunId = crypto.randomUUID();
+    // const workflowRunId = crypto.randomUUID();
 
     console.log("➡️ Sending to QStash...");
     

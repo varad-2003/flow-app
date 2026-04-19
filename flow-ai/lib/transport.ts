@@ -53,15 +53,15 @@ export const createWorkflowTransport = ({ workflowId }: {workflowId: string}) =>
                 }
             }
         },
-        // prepareReconnectToStreamRequest: (data) => {
-        //     return {
-        //         ...data,
-        //         headers: {
-        //             ...data.headers,
-        //             "x-is-reconnect": "true"
-        //         }
-        //     }
-        // },
+        prepareReconnectToStreamRequest: (data) => {
+            return {
+                ...data,
+                headers: {
+                    ...data.headers,
+                    "x-is-reconnect": "true"
+                }
+            }
+        },
         fetch: async (input, init) => {
             // 1. Pehle UUID generate karo
             const workflowRunId = crypto.randomUUID()
