@@ -10,7 +10,7 @@ export const GET = async (req: Request) => {
     const { searchParams } = new URL(req.url)
     const workflowRunId = searchParams.get("id")
     if(!workflowRunId) return new Response("Missing workflow run id", { status: 400 })
-
+    console.log("🔥 GET HIT:", workflowRunId);
      const channel = realtime.channel(workflowRunId)
 
      const stream = new ReadableStream({

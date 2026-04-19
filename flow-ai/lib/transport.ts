@@ -24,7 +24,8 @@ export const createWorkflowTransport = ({ workflowId }: {workflowId: string}) =>
             const triggerRes = await fetch(input, init);
             const data = await triggerRes.json()
             const workflowRunId = data.workflowRunId
-
+            console.log("Frontend ID:", workflowRunId);
+            
             if (!workflowRunId) {
         throw new Error("No workflowRunId received");
       }
