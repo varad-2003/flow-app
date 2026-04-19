@@ -95,6 +95,9 @@ export const { POST } = serve(
                 throw error
             }   
         })
+        return {
+      workflowRunId: ctx.workflowRunId
+    }
     },
     {
         qstashClient: new Client({
