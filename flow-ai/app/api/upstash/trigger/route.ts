@@ -62,6 +62,7 @@ export async function POST(request: Request) {
 
     await client.publishJSON({
       url: `${BASE_URL}/api/workflow/chat`,
+      retries: 2,
       body: {
         workflowId,
         messages,

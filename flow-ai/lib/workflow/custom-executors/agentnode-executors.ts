@@ -121,7 +121,6 @@ export async function executeAgentNode(
 
     }
   }
-  console.log("🔥 EMIT FINISH");
 
   return {
     output: {
