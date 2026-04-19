@@ -52,12 +52,13 @@ export const GET = async (req: Request) => {
 export const { POST } = serve(
     async (ctx) => {
         console.log("🚀 WORKER HIT")
-        const { workflowId, messages } = ctx.requestPayload as {
+        const { workflowId, messages, workflowRunId } = ctx.requestPayload as {
             workflowId: string;
             messages: UIMessage[]
+            workflowRunId: string;
         }
 
-        const workflowRunId = ctx.workflowRunId
+        // const workflowRunId = ctx.workflowRunId
         console.log("⚡ WORKER RECEIVED ID:", workflowRunId);
         const channel = realtime.channel(workflowRunId)
         const message = messages[messages.length - 1]
