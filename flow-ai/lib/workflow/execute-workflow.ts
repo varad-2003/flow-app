@@ -101,7 +101,10 @@ export async function executeWorkflow(
 
         try {
             const result = await exector(node, context);
-            const text = result.output?.text || result.output;
+            const rawOutput = result.output?.text ?? result.output;
+            const text = typeof rawOutput === "string"
+                ? rawOutput
+                : rawOutput != null ? JSON.stringify(rawOutput, null, 2) : "";
 
             if (node.type === NodeTypeEnum.AGENT && text) {
     await channel.emit("workflow.chunk", {

@@ -40,11 +40,13 @@ const ChatPanel = ({workflowId}: {workflowId: string}) => {
         transport: createWorkflowTransport({workflowId})
     })
 
-    const isLoading = status === "submitted" || (status === "streaming" && !Boolean(
-        messages[messages.length - 1]?.parts.some(
-            (part) => part.type === "text" && Boolean(part.text)
-        )
-    ))
+    // const isLoading = status === "submitted" || (status === "streaming" && !Boolean(
+    //     messages[messages.length - 1]?.parts.some(
+    //         (part) => part.type === "text" && Boolean(part.text)
+    //     )
+    // ))
+
+     const isLoading = status === "submitted" || status === "streaming"
 
     const handleSubmit = (message: PromptInputMessage) => {
         if(!message.text?.trim()) return
@@ -100,13 +102,18 @@ const ChatPanel = ({workflowId}: {workflowId: string}) => {
                                 </MessageContent>
                             </Message>
                         ))}
-                        {
+                        {/* {
                             isLoading ? (
                                 <div className='px-2'>
                                     <Loader variant={"dots"} size={"md"} />
                                 </div>
                             ) : null
-                        }
+                        } */}
+                        {isLoading && messages[messages.length-1]?.role !== "assistant" ? (
+                                <div className='px-2'>
+                                    <Loader variant={"dots"} size={"md"} />
+                                </div>
+                            ) : null}
                     </ConversationContent>
                     <ConversationScrollButton />
                 </Conversation>
