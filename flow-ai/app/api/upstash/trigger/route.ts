@@ -5,10 +5,7 @@ const client = new Client({
   baseUrl: process.env.QSTASH_BASE_URL!,
   token: process.env.QSTASH_TOKEN!,
 });
-const vercelUrl = process.env.VERCEL_URL
-const BASE_URL = process.env.VERCEL_URL
-  ? `https://${vercelUrl}`
-  : `http://localhost:3000`;
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || `http://localhost:3000`;
 
 export async function POST(request: Request) {
   const { workflowId, messages } = await request.json();
