@@ -33,6 +33,7 @@ export async function POST(request: Request) {
         workflowRunId: workflowRunId
     })
   } catch (error) {
+    console.error("❌ Workflow trigger error:", error);
         return NextResponse.json({
         success:false,
         error: "Failed to trigger workflow",
