@@ -6,111 +6,48 @@ import { serve } from "@upstash/workflow/nextjs";
 import { Edge, Node } from "@xyflow/react";
 import { generateId, UIMessage } from "ai";
 
-// export const GET = async (req: Request) => {
-//   const { searchParams } = new URL(req.url);
-//   const workflowRunId = searchParams.get("id");
-//   if (!workflowRunId)
-//     return new Response("Missing workflow run id", { status: 400 });
-//   console.log("🔥 GET HIT:", workflowRunId);
-//   const channel = realtime.channel(workflowRunId);
-
-//   const stream = new ReadableStream({
-//     async start(controller) {
-//       const encoder = new TextEncoder();
-//       await channel.subscribe({
-//         events: ["workflow.chunk"],
-//         history: true,
-//         onData({ event, data, channel }) {
-//           console.log("📡 STREAM DATA:", data);
-//           controller.enqueue(
-//             encoder.encode(`data: ${JSON.stringify(data)}\n\n`),
-//           );
-//           // if(data.type === "finish") controller.close()
-//           if (data.type === "finish") {
-//             controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
-//             controller.close();
-//           }
-//         },
-//       });
-//       req.signal.addEventListener("abort", () => {
-//         controller.close();
-//       });
-//     },
-//   });
-
-//   return new Response(stream, {
-//     headers: {
-//       "Content-Type": "text/event-stream",
-//       "Cache-Control": "no-cache",
-//       Connection: "keep-alive",
-//     },
-//   });
-// };
-
 export const GET = async (req: Request) => {
-    const { searchParams } = new URL(req.url)
-    const workflowRunId = searchParams.get("id")
-    if (!workflowRunId) return new Response("Missing workflow run id", { status: 400 })
-    console.log("🔥 GET HIT:", workflowRunId);
-    const channel = realtime.channel(workflowRunId)
- 
-    const messageId = generateId()
-    const textId = generateId()
- 
-    const stream = new ReadableStream({
-        async start(controller) {
-            const encoder = new TextEncoder()
- 
-            const enqueue = (obj: object) => {
-                controller.enqueue(encoder.encode(`data: ${JSON.stringify(obj)}\n\n`))
-            }
- 
-            // AI SDK v6 requires message start event first
-            enqueue({ type: "start", messageId })
- 
-            await channel.subscribe({
-                events: ["workflow.chunk"],
-                history: true,
-                onData({ data }: any) {
-                    console.log("📡 STREAM DATA:", data);
- 
-                    if (data.type === "chunk") {
-                        // text-start only once before first delta
-                        enqueue({ type: "text-start", id: textId })
-                        enqueue({ type: "text-delta", id: textId, delta: data.content ?? "" })
- 
-                    } else if (data.type === "data-workflow-node") {
-                        // custom data part — type must start with "data-"
-                        enqueue({
-                            type: "data-workflow-node",
-                            data: data.data,
-                            id: data.id,
-                        })
- 
-                    } else if (data.type === "finish") {
-                        enqueue({ type: "text-end", id: textId })
-                        enqueue({ type: "finish" })
-                        controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
-                        controller.close()
-                    }
-                }
-            })
- 
-            req.signal.addEventListener("abort", () => {
-                controller.close()
-            })
-        }
-    })
- 
-    return new Response(stream, {
-        headers: {
-            "Content-Type": "text/event-stream",
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "x-vercel-ai-ui-message-stream": "v1",  // REQUIRED for AI SDK v6
-        }
-    })
-}
+  const { searchParams } = new URL(req.url);
+  const workflowRunId = searchParams.get("id");
+  if (!workflowRunId)
+    return new Response("Missing workflow run id", { status: 400 });
+  console.log("🔥 GET HIT:", workflowRunId);
+  const channel = realtime.channel(workflowRunId);
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+      await channel.subscribe({
+        events: ["workflow.chunk"],
+        history: true,
+        onData({ event, data, channel }) {
+          console.log("📡 STREAM DATA:", data);
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify(data)}\n\n`),
+          );
+          // if(data.type === "finish") controller.close()
+          if (data.type === "finish") {
+            controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+            controller.close();
+          }
+        },
+      });
+      req.signal.addEventListener("abort", () => {
+        controller.close();
+      });
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    },
+  });
+};
+
+
 
 export const { POST } = serve(
   async (ctx) => {
