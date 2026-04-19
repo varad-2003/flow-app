@@ -1,6 +1,5 @@
 import { Client } from "@upstash/workflow";
 import { NextResponse } from "next/server";
-import { success } from "zod";
 
 const client = new Client({
   baseUrl: process.env.QSTASH_BASE_URL!,

@@ -37,16 +37,14 @@ const ChatPanel = ({workflowId}: {workflowId: string}) => {
     const { messages, sendMessage, status } = useChat<UIMessage>({
         id: chatId ?? undefined,
         messages: [],
-        transport: createWorkflowTransport({
-            workflowId
-        })
+        transport: createWorkflowTransport({workflowId})
     })
 
-    const isLoading = status === "submitted" || status === "streaming" && !Boolean(
+    const isLoading = status === "submitted" || (status === "streaming" && !Boolean(
         messages[messages.length - 1]?.parts.some(
             (part) => part.type === "text" && Boolean(part.text)
         )
-    )
+    ))
 
     const handleSubmit = (message: PromptInputMessage) => {
         if(!message.text?.trim()) return

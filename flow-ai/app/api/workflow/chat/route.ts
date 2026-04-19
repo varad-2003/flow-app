@@ -14,7 +14,6 @@ export const GET = async (req: Request) => {
   const workflowRunId = searchParams.get("id");
   if (!workflowRunId)
     return new Response("Missing workflow run id", { status: 400 });
-  console.log("🔥 GET HIT:", workflowRunId);
   const channel = realtime.channel(workflowRunId);
 
   const stream = new ReadableStream({
@@ -28,11 +27,7 @@ export const GET = async (req: Request) => {
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify(data)}\n\n`),
           );
-          // if(data.type === "finish") controller.close()
-          if (data.type === "finish") {
-            controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
-            controller.close();
-          }
+          if(data.type === "finish") controller.close()
         },
       });
       req.signal.addEventListener("abort", () => {
@@ -44,8 +39,6 @@ export const GET = async (req: Request) => {
   return new Response(stream, {
     headers: {
       "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
     },
   });
 };
@@ -54,11 +47,9 @@ export const GET = async (req: Request) => {
 
 export const { POST } = serve(
   async (ctx) => {
-    console.log("🚀 WORKER HIT");
     const { workflowId, messages } = ctx.requestPayload as {
       workflowId: string;
       messages: UIMessage[];
-      workflowRunId: string;
     };
 
     const workflowRunId = ctx.workflowRunId
@@ -102,17 +93,13 @@ export const { POST } = serve(
         throw error;
       }
     });
-    return {
-      workflowRunId: ctx.workflowRunId,
-    };
   },
   {
-    retries: 2,
     qstashClient: new Client({
       token: process.env.QSTASH_TOKEN!,
-      // headers: {
-      //     "x-vercel-protection-bypass": process.env.VERCEL_PROTECTION_BYPASS_TOKEN!
-      // }
+      headers: {
+          "x-vercel-protection-bypass": process.env.VERCEL_PROTECTION_BYPASS_TOKEN!
+      }
     }),
   },
 );
