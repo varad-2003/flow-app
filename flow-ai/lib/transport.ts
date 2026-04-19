@@ -53,18 +53,19 @@ export const createWorkflowTransport = ({ workflowId }: {workflowId: string}) =>
                 }
             }
         },
-        prepareReconnectToStreamRequest: (data) => {
-            return {
-                ...data,
-                headers: {
-                    ...data.headers,
-                    "x-is-reconnect": "true"
-                }
-            }
-        },
+        // prepareReconnectToStreamRequest: (data) => {
+        //     return {
+        //         ...data,
+        //         headers: {
+        //             ...data.headers,
+        //             "x-is-reconnect": "true"
+        //         }
+        //     }
+        // },
         fetch: async (input, init) => {
             // 1. Pehle UUID generate karo
             const workflowRunId = crypto.randomUUID()
+            console.log("🆔 Generated ID:", workflowRunId)
 
             // 2. SSE PEHLE connect karo same ID se
             const ssePromise = fetch(`/api/workflow/chat?id=${workflowRunId}`, {
@@ -79,6 +80,7 @@ export const createWorkflowTransport = ({ workflowId }: {workflowId: string}) =>
 
             // 4. Trigger karo - same workflowRunId backend ko bhejo
             const body = JSON.parse(init?.body as string)
+            console.log("📤 Sending workflowRunId:", workflowRunId)
             await fetch(input, {
                 ...init,
                 body: JSON.stringify({
