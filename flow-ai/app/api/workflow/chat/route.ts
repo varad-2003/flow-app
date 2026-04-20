@@ -15,47 +15,30 @@ export const GET = async (req: Request) => {
   if (!workflowRunId)
     return new Response("Missing workflow run id", { status: 400 });
   const channel = realtime.channel(workflowRunId);
- 
+
   const stream = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder();
- 
-      const writeLine = (prefix: string, payload: unknown) => {
-        controller.enqueue(
-          encoder.encode(`${prefix}:${JSON.stringify(payload)}\n`)
-        );
-      };
- 
       await channel.subscribe({
         events: ["workflow.chunk"],
         history: true,
-        onData({ data }: { event: string; data: any; channel: any }) {
+        onData({ event, data, channel }) {
           console.log("📡 STREAM DATA:", data);
- 
-          if (data.type === "chunk") {
-            // text delta → prefix "0"
-            writeLine("0", data.content);
-          } else if (data.type === "data-workflow-node") {
-            // custom data part → prefix "2"
-            writeLine("2", [{ type: "data-workflow-node", data: data.data }]);
-          } else if (data.type === "finish") {
-            // finish → prefix "d"
-            writeLine("d", { finishReason: "stop", usage: { promptTokens: 0, completionTokens: 0 } });
-            controller.close();
-          }
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify(data)}\n\n`),
+          );
+          if(data.type === "finish") controller.close()
         },
       });
- 
       req.signal.addEventListener("abort", () => {
         controller.close();
       });
     },
   });
- 
+
   return new Response(stream, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "x-vercel-ai-data-stream": "v1",
+      "Content-Type": "text/event-stream",
     },
   });
 };
