@@ -75,7 +75,7 @@ const CreateWorkflowDialog = () => {
                         <FormLabel>Workflow Description</FormLabel>
                         <FormControl>
                             <Textarea 
-                                placeholder='e.g. This workflow handles support'
+                                placeholder='e.g. This workflow handles support' {... field}
                             />
                         </FormControl>
                     </FormItem>

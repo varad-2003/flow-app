@@ -29,5 +29,4 @@ const StartNode = (props:NodeProps) => {
     </>
   )
 }
-
 export default StartNode

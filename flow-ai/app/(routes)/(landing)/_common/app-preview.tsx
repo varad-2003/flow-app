@@ -12,7 +12,7 @@ const AppPreview = () => {
           <div className="w-full">
             <div className="bg-background rounded-(--radius) relative mx-auto overflow-hidden border border-transparent shadow-xl shadow-black/10 ring-1 ring-black/10">
               <Image
-                src={isDark ? "/images/app-dark.png" : "/images/app-light.png"}
+                src={isDark ? "/app-dark.png" : "/app-light.png"}
                 alt="app screen"
                 width="2880"
                 height="1842"
